@@ -1,4 +1,4 @@
-#### How to use
+# How to use
 1. Edit MyDsClientCanary.java to appropriate port number and AUTH credentials, by default these are 50000 and jack3100 respectively.
 2. Compile using javac, etc.
 3. You can now run a simulation either one of two ways via a console window: you can either use ds-server with a command such as: ./ds-server -c [path to config file] -v brief -n or you can run configs using a .sh file. 
