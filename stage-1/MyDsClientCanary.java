@@ -12,7 +12,10 @@ public static void main(String args[])throws Exception{
   //not physically next to logic that uses them,
   //this is because the SCHD message also needs to reference lServer,
   //and I want to group all the related buffers together for readability
+  int sTypeNo = 0;
+  int currentServerNo = 0;
   int lCores = 0;
+  String sType = "";
   String[] lServer = new String[7];
   String[] serverToken = new String[7];
   //flag to make sure GETS is only run the one time
@@ -64,8 +67,13 @@ public static void main(String args[])throws Exception{
         sin2=din.readLine();
         serverToken = sin2.split("\\s+");
         if(lCores < Integer.parseInt(serverToken[4])){
+          sTypeNo = 1;
+          sType = serverToken[0];
           lCores = Integer.parseInt(serverToken[4]);
           lServer = serverToken;
+        }
+        else if(sType.equals(serverToken[0])){
+          sTypeNo++;
         }
       }
       dout.write(("OK\n").getBytes());
@@ -79,8 +87,12 @@ public static void main(String args[])throws Exception{
     }
     else if(sin.startsWith("JOBN")){
       //do sheduling
+      if(currentServerNo > sTypeNo-1){
+        currentServerNo = 0;
+      }
       //System.out.println("JOBN is: "+sin);
-      String schdMsg = "SCHD "+sin.split("\\s+")[2]+" "+lServer[0]+" "+lServer[1]+"\n";
+      String schdMsg = "SCHD "+sin.split("\\s+")[2]+" "+lServer[0]+" "+Integer.toString(currentServerNo)+"\n";
+      currentServerNo++;
       dout.write((schdMsg).getBytes());
       dout.flush();
       sin=din.readLine();
