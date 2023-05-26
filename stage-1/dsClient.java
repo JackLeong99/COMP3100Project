@@ -34,25 +34,31 @@ public void sendMessage(String msg){
     }
 }
 
-public void handleMessage(String check){
+public void handleMessage(){
     try {
         String stringBuffer = din.readLine();
         String[] stringBufferSplit = stringBuffer.split("\\s+");
+        switch(stringBufferSplit[0]){
+            case "JCPL":
+                //TODO handle jcpl message
+                break;
+            case "JOBN":
+                //TODO handle shedule msg based on algorithm type
+                break;
+            case "NONE":
+                    run = false;
+                break;
+        }
+    } catch (IOException e){
+        e.printStackTrace();
+    }
+}
+
+public void handleMessage(String check){
+    try {
+        String stringBuffer = din.readLine();
         if(!stringBuffer.startsWith(check)){
             handleQuit();
-        }
-        else {
-            switch(stringBufferSplit[0]){
-                case "JCPL":
-                    //TODO handle jcpl message
-                    break;
-                case "JOBN":
-                    //TODO handle shedule msg based on algorithm type
-                    break;
-                case "NONE":
-                    run = false;
-                    break;
-            }
         }
     }  catch(IOException e) {
         e.printStackTrace();
