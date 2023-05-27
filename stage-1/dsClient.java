@@ -1,33 +1,34 @@
 import java.net.*;
 import java.io.*;
 class dsClient {
-    boolean run = true;
-    Socket s;
-    BufferedReader din;
-    DataOutputStream dout;
-
-public void main(String args[])throws Exception{
-  s=new Socket("127.0.0.1",50000);
-  din=new BufferedReader(new InputStreamReader(s.getInputStream()));
-  dout=new DataOutputStream(s.getOutputStream());
+    private static Socket s;
+    private static BufferedReader din;
+    private static DataOutputStream dout;
+    private static boolean run;
+public static void main(String args[])throws Exception{
+  s = new Socket("127.0.0.1",50000);
+  din = new BufferedReader(new InputStreamReader(s.getInputStream()));
+  dout = new DataOutputStream(s.getOutputStream());
+  run = true;
   auth();
   while(run){
     sendMessage("REDY");
     handleMessage();
   }
   handleQuit();
+  din.close();
   dout.close();
   s.close();
 }
 
-public void auth(){
+public static void auth(){
     sendMessage("HELO");
     handleMessage("OK");
     sendMessage("AUTH jack3100");
     handleMessage("OK");
 }
 
-public void sendMessage(String msg){
+public static void sendMessage(String msg){
     try {
     String nlMsg = msg + "\n";
     dout.write(nlMsg.getBytes());
@@ -37,7 +38,7 @@ public void sendMessage(String msg){
     }
 }
 
-public void handleMessage(){
+public static void handleMessage(){
     try {
         String stringBuffer = din.readLine();
         String[] stringBufferSplit = stringBuffer.split("\\s+");
@@ -64,7 +65,7 @@ public void handleMessage(){
     }
 }
 
-public void handleMessage(String check){
+public static void handleMessage(String check){
     //TODO make this return a string of recieved message 
     try {
         String stringBuffer = din.readLine();
@@ -76,7 +77,7 @@ public void handleMessage(String check){
     }
 }
 
-public void handleJobnSRTN(String[] JOBN){   
+public static void handleJobnSRTN(String[] JOBN){   
     try{
     String stringBuffer = ""; 
     sendMessage("GETS Avail "+JOBN[4]+" "+JOBN[5]+" "+JOBN[6]);
@@ -116,11 +117,11 @@ public void handleJobnSRTN(String[] JOBN){
     }   
 }
 
-public void schdJOBN(String jobID, String serverType, String serverID){
+public static void schdJOBN(String jobID, String serverType, String serverID){
     sendMessage("SCHD "+jobID+" "+serverType+" "+serverID);
 }
 
-public void handleQuit(){
+public static void handleQuit(){
     try {
         sendMessage("QUIT");
         String sin = din.readLine();
