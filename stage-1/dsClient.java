@@ -31,6 +31,7 @@ public static void auth(){
 public static void sendMessage(String msg){
     try {
     String nlMsg = msg + "\n";
+    System.out.print(nlMsg);
     dout.write(nlMsg.getBytes());
     dout.flush();
     }  catch(IOException e) {
@@ -100,6 +101,9 @@ public static void handleJobnSRTN(String[] JOBN){
     }
     else{
         sendMessage("GETS Capable "+JOBN[4]+" "+JOBN[5]+" "+JOBN[6]);
+        din.readLine();
+        //this (line aboove) is only here because of what I belive to be a bug in ds-server
+        //where after all the correct behaviours, GETS Avail will send an empty line if no servers are available
         stringBuffer = din.readLine();
         nRecs = Integer.parseInt(stringBuffer.split("\\s+")[1]);
         sendMessage("OK");
