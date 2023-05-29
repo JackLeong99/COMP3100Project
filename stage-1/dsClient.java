@@ -43,7 +43,7 @@ public static void sendMessage(String msg){
 public static void doGetsAllRequest(){
     try {
         String stringBuffer = "";
-        sendMessage("GETS ALL");
+        sendMessage("GETS All");
         stringBuffer = din.readLine();
         int nRecs = Integer.parseInt(stringBuffer.split("\\s+")[1]);
         serverList = new String[nRecs];
@@ -71,6 +71,7 @@ public static Boolean doLstjRequest(String server){
         sendMessage("LSTJ "+server.split("\\s+")[0]+" "+server.split("\\s+")[1]);
         stringBuffer = din.readLine();
         int nRecs = Integer.parseInt(stringBuffer.split("\\s+")[1]);
+        sendMessage("OK");
         for(int i=0; i < nRecs; i++){
             stringBuffer = din.readLine();
             switch(Integer.parseInt(stringBuffer.split("\\s+")[1])){
@@ -84,6 +85,11 @@ public static Boolean doLstjRequest(String server){
                     continue;
             }
         }
+        if(nRecs == 0){
+            handleMessage(".");
+        }
+        sendMessage("OK");
+        handleMessage(".");
     } catch (IOException e) {
         e.printStackTrace();
     }
