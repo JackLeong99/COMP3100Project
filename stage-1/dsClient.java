@@ -1,5 +1,6 @@
 import java.net.*;
 import java.io.*;
+
 class dsClient {
     private static Socket s;
     private static BufferedReader din;
@@ -43,6 +44,7 @@ public static void sendMessage(String msg){
 }
 
 public static Boolean doLstjRequest(String server){
+    //currently unused
     Boolean running = false;
     Boolean waiting = false;
     try {
@@ -138,11 +140,15 @@ public static void handleJobnFF(String[] JOBN){
             stringBuffer = din.readLine();
             if(firstServer){
                 lWaiting = Integer.parseInt(stringBuffer.split("\\s+")[7]);
-                //lRunning = Integer.parseInt(stringBuffer.split("\\s+")[8]);
+                lRunning = Integer.parseInt(stringBuffer.split("\\s+")[8]);
                 targetServer = stringBuffer;
                 firstServer = false;
             }
-            if(Integer.parseInt(stringBuffer.split("\\s+")[7]) < lWaiting){
+            if(Integer.parseInt(stringBuffer.split("\\s+")[8]) < lRunning){
+                targetServer = stringBuffer;
+                lWaiting = Integer.parseInt(stringBuffer.split("\\s+")[8]);
+            }
+            else if(Integer.parseInt(stringBuffer.split("\\s+")[7]) < lWaiting){
                 targetServer = stringBuffer;
                 lWaiting = Integer.parseInt(stringBuffer.split("\\s+")[7]);
             }
