@@ -35,7 +35,7 @@ public static void sendMessage(String msg){
     //while also allowing for easier debugging
     try {
     String nlMsg = msg + "\n";
-    System.out.print(nlMsg);
+    //System.out.print(nlMsg);
     dout.write(nlMsg.getBytes());
     dout.flush();
     }  catch(IOException e) {
@@ -81,7 +81,7 @@ public static void handleMessage(){
     //handle incoming message when you cant be sure what the next incoming message will be
     try {
         String stringBuffer = din.readLine();
-        System.out.println(stringBuffer);
+        //System.out.println(stringBuffer);
         //split longer messages such as JOBN so that you can read just the first part
         //this is done intentionally over .startsWith() as it makes for a cleaner switch case
         //and allows you to pass the full message as a pre-split array into functions
@@ -111,7 +111,7 @@ public static void handleMessage(String check){
     //also allows for easy debugging
     try {
         String stringBuffer = din.readLine();
-        System.out.println(stringBuffer);
+        //System.out.println(stringBuffer);
         if(!stringBuffer.startsWith(check)){
             handleQuit();
         }
@@ -123,12 +123,12 @@ public static void handleMessage(String check){
 public static void handleJobnFF(String[] JOBN){
     //main attempt at an algorithm that can even go on par with baseline algorithms
     //TODO document this pre-submission
-    //This current version works very close to expected behaviour and produces similar logs
-    //to baseline ff from ds-client but with significantly higer average wait time.
-    //I know im not accounting for running tasks yet but I fear this will not be enough
+    //This is on par with baseline ff based on wk9 test config only
     String targetServer = "";
+    //store the lowst number of waiting and running jobs from the GETS response
     int lWaiting = 0;
     int lRunning = 0;
+    //used to set the first server as the prefered option unless a better one is found
     Boolean firstServer = true;
     try {
         String stringBuffer = "";
@@ -138,16 +138,19 @@ public static void handleJobnFF(String[] JOBN){
         sendMessage("OK");
         for(int i=0; i < nRecs; i++){
             stringBuffer = din.readLine();
+            //Set first server in GETS Capable response as baseline for availability
             if(firstServer){
                 lWaiting = Integer.parseInt(stringBuffer.split("\\s+")[7]);
                 lRunning = Integer.parseInt(stringBuffer.split("\\s+")[8]);
                 targetServer = stringBuffer;
                 firstServer = false;
             }
+            //if a server has less running tasks than the first set it as the prefered
             if(Integer.parseInt(stringBuffer.split("\\s+")[8]) < lRunning){
                 targetServer = stringBuffer;
                 lWaiting = Integer.parseInt(stringBuffer.split("\\s+")[8]);
             }
+            //if no server has less running tasks then prefer the one with least waiting tasks
             else if(Integer.parseInt(stringBuffer.split("\\s+")[7]) < lWaiting){
                 targetServer = stringBuffer;
                 lWaiting = Integer.parseInt(stringBuffer.split("\\s+")[7]);
