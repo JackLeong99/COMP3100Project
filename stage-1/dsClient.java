@@ -22,6 +22,7 @@ public static void main(String args[])throws Exception{
 }
 
 public static void auth(){
+    //handles the initial handshake messages
     sendMessage("HELO");
     handleMessage("OK");
     sendMessage("AUTH jack3100");
@@ -29,6 +30,8 @@ public static void auth(){
 }
 
 public static void sendMessage(String msg){
+    //generic message function that adds newline char
+    //while also allowing for easier debugging
     try {
     String nlMsg = msg + "\n";
     System.out.print(nlMsg);
@@ -73,19 +76,23 @@ public static Boolean doLstjRequest(String server){
 }
 
 public static void handleMessage(){
+    //handle incoming message when you cant be sure what the next incoming message will be
     try {
         String stringBuffer = din.readLine();
         System.out.println(stringBuffer);
+        //split longer messages such as JOBN so that you can read just the first part
+        //this is done intentionally over .startsWith() as it makes for a cleaner switch case
+        //and allows you to pass the full message as a pre-split array into functions
         String[] stringBufferSplit = stringBuffer.split("\\s+");
         switch(stringBufferSplit[0]){
             case "JOBN":
-                //TODO handle shedule msg based on algorithm type
+                //TODO if I have time add switch for multiple algorithms based in option
                 //probably use EJWT, LSTJ or other message to get estimated work time left 
                 //for each server to find best candidate for job taker
-                //handleJobnDUMB(stringBufferSplit);
                 handleJobnFF(stringBufferSplit);
                 break;
             case "NONE":
+                    //if None message is recieved break the main loop
                     run = false;
                 break;
             default:
@@ -97,6 +104,9 @@ public static void handleMessage(){
 }
 
 public static void handleMessage(String check){
+    //alternate version of handle message for 
+    //if you want to terminate when an unexpected message is recieved
+    //also allows for easy debugging
     try {
         String stringBuffer = din.readLine();
         System.out.println(stringBuffer);
@@ -109,6 +119,11 @@ public static void handleMessage(String check){
 }
 
 public static void handleJobnFF(String[] JOBN){
+    //main attempt at an algorithm that can even go on par with baseline algorithms
+    //TODO document this pre-submission
+    //This current version works very close to expected behaviour and produces similar logs
+    //to baseline ff from ds-client but with significantly higer average wait time.
+    //I know im not accounting for running tasks yet but I fear this will not be enough
     String targetServer = "";
     int lWaiting = 0;
     int lRunning = 0;
@@ -123,14 +138,13 @@ public static void handleJobnFF(String[] JOBN){
             stringBuffer = din.readLine();
             if(firstServer){
                 lWaiting = Integer.parseInt(stringBuffer.split("\\s+")[7]);
-                lRunning = Integer.parseInt(stringBuffer.split("\\s+")[8]);
+                //lRunning = Integer.parseInt(stringBuffer.split("\\s+")[8]);
                 targetServer = stringBuffer;
                 firstServer = false;
             }
             if(Integer.parseInt(stringBuffer.split("\\s+")[7]) < lWaiting){
-                if(Integer.parseInt(stringBuffer.split("\\s+")[8]) < lRunning){
-                    targetServer = stringBuffer;
-                }
+                targetServer = stringBuffer;
+                lWaiting = Integer.parseInt(stringBuffer.split("\\s+")[7]);
             }
         }
         sendMessage("OK");
@@ -142,11 +156,14 @@ public static void handleJobnFF(String[] JOBN){
 }
 
 public static void schdJOBN(String[] JOBN, String server){
+    //Automatically format a SCHD message given a job and target server
     sendMessage("SCHD "+JOBN[2]+" "+server.split("\\s+")[0]+" "+server.split("\\s+")[1]);
     handleMessage("OK");
 }
 
 public static void handleQuit(){
+    //handle quitting
+    //TODO automatically QUIT if no response from server after X seconds of waiting for a response QUIT message
     try {
         sendMessage("QUIT");
         String sin = din.readLine();
