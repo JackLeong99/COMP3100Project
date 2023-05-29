@@ -209,6 +209,7 @@ public static void handleJobnFF(String[] JOBN){
 
 public static void schdJOBN(String jobID, String serverType, String serverID){
     sendMessage("SCHD "+jobID+" "+serverType+" "+serverID);
+    handleMessage("OK");
 }
 
 public static void handleQuit(){
