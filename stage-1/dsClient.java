@@ -5,20 +5,21 @@ class dsClient {
     private static BufferedReader din;
     private static DataOutputStream dout;
     private static boolean run;
+    private static String[] serverList;
 public static void main(String args[])throws Exception{
-  s = new Socket("127.0.0.1",50000);
-  din = new BufferedReader(new InputStreamReader(s.getInputStream()));
-  dout = new DataOutputStream(s.getOutputStream());
-  run = true;
-  auth();
-  while(run){
-    sendMessage("REDY");
-    handleMessage();
-  }
-  handleQuit();
-  din.close();
-  dout.close();
-  s.close();
+    s = new Socket("127.0.0.1",50000);
+    din = new BufferedReader(new InputStreamReader(s.getInputStream()));
+    dout = new DataOutputStream(s.getOutputStream());
+    run = true;
+    auth();
+    while(run){
+        sendMessage("REDY");
+        handleMessage();
+    }
+    handleQuit();
+    din.close();
+    dout.close();
+    s.close();
 }
 
 public static void auth(){
@@ -39,9 +40,33 @@ public static void sendMessage(String msg){
     }
 }
 
+public static void doGetsAllRequest(Boolean reverse){
+    try {
+        String stringBuffer = "";
+        sendMessage("GETS ALL");
+        stringBuffer = din.readLine();
+        int nRecs = Integer.parseInt(stringBuffer.split("\\s+")[1]);
+        serverList = new String[nRecs];
+        sendMessage("OK");
+        for(int i=0; i < nRecs; i++){
+            stringBuffer = din.readLine();
+            serverList[i] = stringBuffer;
+        }
+        sendMessage("OK");
+        handleMessage(".");
+
+        if(reverse){
+            serverList = reverseStringArray(serverList);
+        }
+    } catch (IOException e){
+        e.printStackTrace();
+    }
+}
+
 public static void handleMessage(){
     try {
         String stringBuffer = din.readLine();
+        System.out.println(stringBuffer);
         String[] stringBufferSplit = stringBuffer.split("\\s+");
         switch(stringBufferSplit[0]){
             case "JCPL":
@@ -70,6 +95,7 @@ public static void handleMessage(String check){
     //TODO make this return a string of recieved message 
     try {
         String stringBuffer = din.readLine();
+        System.out.println(stringBuffer);
         if(!stringBuffer.startsWith(check)){
             handleQuit();
         }
@@ -89,7 +115,7 @@ public static void handleJobnSRTN(String[] JOBN){
     //Handle server listings
     String targetServerType = "";
     String targetServerID = "";
-    for(int i=0; i < nRecs; i++){
+    for(int i=nRecs; i > 0; i--){
         stringBuffer = din.readLine();
         targetServerType = stringBuffer.split("\\s+")[0];
         targetServerID = stringBuffer.split("\\s+")[1];
@@ -107,7 +133,7 @@ public static void handleJobnSRTN(String[] JOBN){
         stringBuffer = din.readLine();
         nRecs = Integer.parseInt(stringBuffer.split("\\s+")[1]);
         sendMessage("OK");
-        for(int i=0; i < nRecs; i++){
+        for(int i=nRecs; i > 0; i--){
             stringBuffer = din.readLine();
             targetServerType = stringBuffer.split("\\s+")[0];
             targetServerID = stringBuffer.split("\\s+")[1];
@@ -136,5 +162,14 @@ public static void handleQuit(){
     } catch(IOException e){
         e.printStackTrace();
     }
+}
+
+//utility functions
+public static String[] reverseStringArray(String[] arr){
+    String[] out = new String[arr.length];
+    for (int i=0; i < arr.length; i++){
+        out[arr.length-i-1] = arr[i];
+    }
+    return out;
 }
 }
