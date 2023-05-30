@@ -1,12 +1,20 @@
 # How to use
-1. Edit MyDsClientCanary.java to appropriate port number and AUTH credentials, by default these are 50000 and jack3100 respectively.
-2. Compile using javac, etc.
-3. You can now run a simulation either one of two ways via a console window: you can either use ds-server with a command such as: ./ds-server -c [path to config file] -v brief -n or you can run configs using an .sh file. 
-4. If you use ds-server make sure to run the compiled MyDsClientCanary.class file in a seperate console window using the command: java MyDsClientCanary
-5. Assuming this is done correctly the client should shedule all jobs before terminating automatically.
+All files related to stage 2 are present withing the stage-2 folder and the respective test suite is included.
 
-Note that the only files in the repo that are strictly needed are: MyDsClientCanary.java, MyDsClientCanary.class, ds-server/your own .sh file, and any config files you would like to run. All of these are located in this repo under COMP3100Project/stage-1/
+dsClient.class is the file submitted for this stage and an uncompiled java file is also provided.
+
+dsClient takes up to 3 arguments:
+
+Arg 1 is an auth name. By default this is jack3100
+Arg 2 is for the socket ip. By default this is 127.0.0.1
+Arg 3 is for the socket port. By default this is 50000
+
+Please note that unfortunately args must be made in order and you cannot ommit preceding args, ie. you cannot have just the ip and port args without putting the auth name before them.
+
+However you can ommit proceding args, for example you can put only an auth name, or only an auth and ip arg.
+
+If no args are made the defaults listed above will be used.
 
 ## Important note
 
-Don't forget you may need to give permissions for ds-server using: chmod +x ./ds-server
+Don't forget you may need to give permissions for some files using: chmod +x ./"file name here"
