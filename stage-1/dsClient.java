@@ -43,40 +43,6 @@ public static void sendMessage(String msg){
     }
 }
 
-public static Boolean doLstjRequest(String server){
-    //currently unused
-    Boolean running = false;
-    Boolean waiting = false;
-    try {
-        String stringBuffer = "";
-        sendMessage("LSTJ "+server.split("\\s+")[0]+" "+server.split("\\s+")[1]);
-        stringBuffer = din.readLine();
-        int nRecs = Integer.parseInt(stringBuffer.split("\\s+")[1]);
-        sendMessage("OK");
-        for(int i=0; i < nRecs; i++){
-            stringBuffer = din.readLine();
-            switch(Integer.parseInt(stringBuffer.split("\\s+")[1])){
-                case 1:
-                    waiting = true;
-                    continue;
-                case 2:
-                    running = true;
-                    continue;
-                default:
-                    continue;
-            }
-        }
-        if(nRecs == 0){
-            handleMessage(".");
-        }
-        sendMessage("OK");
-        handleMessage(".");
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-    return running && waiting;
-}
-
 public static void handleMessage(){
     //handle incoming message when you cant be sure what the next incoming message will be
     try {
@@ -88,14 +54,11 @@ public static void handleMessage(){
         String[] stringBufferSplit = stringBuffer.split("\\s+");
         switch(stringBufferSplit[0]){
             case "JOBN":
-                //TODO if I have time add switch for multiple algorithms based in option
-                //probably use EJWT, LSTJ or other message to get estimated work time left 
-                //for each server to find best candidate for job taker
                 handleJobnFF(stringBufferSplit);
                 break;
             case "NONE":
-                    //if None message is recieved break the main loop
-                    run = false;
+                //if None message is recieved break the main loop
+                run = false;
                 break;
             default:
                 break;
@@ -122,8 +85,8 @@ public static void handleMessage(String check){
 
 public static void handleJobnFF(String[] JOBN){
     //main attempt at an algorithm that can even go on par with baseline algorithms
-    //TODO document this pre-submission
-    //This is on par with baseline ff based on wk9 test config only
+    //This is marginally worse/on par with baseline ff and better than a few of the others
+    //however it does consistently outperform all baselines in terms of resource utilisation
     String targetServer = "";
     //store the lowst number of waiting and running jobs from the GETS response
     int lWaiting = 0;
@@ -172,12 +135,10 @@ public static void schdJOBN(String[] JOBN, String server){
 
 public static void handleQuit(){
     //handle quitting
-    //TODO automatically QUIT if no response from server after X seconds of waiting for a response QUIT message
     try {
         sendMessage("QUIT");
         String sin = din.readLine();
         while(!sin.equals("QUIT")){
-            //wait for seconds
             sin=din.readLine();
         }
     } catch(IOException e){
