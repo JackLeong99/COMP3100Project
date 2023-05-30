@@ -6,12 +6,30 @@ class dsClient {
     private static BufferedReader din;
     private static DataOutputStream dout;
     private static boolean run;
+    //args related variables
+    private static String auth = "jack3100";
+    private static String ip = "127.0.0.1";
+    private static int port = 50000;
 public static void main(String args[])throws Exception{
-    s = new Socket("127.0.0.1",50000);
+    switch(args.length){
+        case 1:
+            auth = args[0];
+            break;
+        case 2:
+            auth = args[0];
+            ip = args[1];
+            break;
+        case 3:
+            auth = args[0];
+            ip = args[1];
+            port = Integer.parseInt(args[2]);
+            break;
+    }
+    s = new Socket(ip,port);
     din = new BufferedReader(new InputStreamReader(s.getInputStream()));
     dout = new DataOutputStream(s.getOutputStream());
     run = true;
-    auth();
+    auth(auth);
     while(run){
         sendMessage("REDY");
         handleMessage();
@@ -22,11 +40,11 @@ public static void main(String args[])throws Exception{
     s.close();
 }
 
-public static void auth(){
+public static void auth(String auth){
     //handles the initial handshake messages
     sendMessage("HELO");
     handleMessage("OK");
-    sendMessage("AUTH jack3100");
+    sendMessage("AUTH "+auth);
     handleMessage("OK");
 }
 
