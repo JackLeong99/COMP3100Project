@@ -5,9 +5,9 @@ dsClient.class is the file submitted for this stage and an uncompiled java file 
 
 dsClient takes up to 3 arguments:
 
-Arg 1 is an auth name. By default this is jack3100
-Arg 2 is for the socket ip. By default this is 127.0.0.1
-Arg 3 is for the socket port. By default this is 50000
+- Arg 1 is an auth name. By default this is jack3100
+- Arg 2 is for the socket ip. By default this is 127.0.0.1
+- Arg 3 is for the socket port. By default this is 50000
 
 Please note that unfortunately args must be made in order and you cannot ommit preceding args, ie. you cannot have just the ip and port args without putting the auth name before them.
 
